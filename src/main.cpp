@@ -8,57 +8,41 @@
 
 volatile int buttonState = 0; // volatile because will use in interruption function
 
-//int encoderAPinLast = LOW;
-//int encoderPos = 0;
-//int enc_data = LOW;
+volatile int encoderPos = 0;  // a counter for the dial
+int lastReportedPos = 1;   // change management
+static boolean rotating = false;    // debounce management
 
-volatile unsigned long threshold = 10000;
-volatile long rotaryHalfSteps = 0;
+// interrupt service routine vars
+boolean A_set = false;
+boolean B_set = false;
 
-volatile unsigned long int0time = 0;
-volatile unsigned long int1time = 0;
-volatile uint8_t int0signal = 0;
-volatile uint8_t int1signal = 0;
-volatile uint8_t int0history = 0;
-volatile uint8_t int1history = 0;
-
-void int0()
-{
-    if ( micros() - int0time < threshold )
-        return;
-    int0history = int0signal;
-    int0signal = bitRead(encoderBPin, 2);
-
-    if ( int0history == int0signal )
-        return;
-    int0time = micros();
-
-    if ( int0signal == int1signal ) {
-        rotaryHalfSteps++;
-        digitalWrite(LED_BUILTIN, HIGH);
-    } else {
-        rotaryHalfSteps--;
-        digitalWrite(LED_BUILTIN, LOW);
+void doEncoderA() {
+    if ( rotating ) delay (1);  // wait a little until the bouncing is done
+    if ( digitalRead(encoderAPin) != A_set ) { // debounce once more
+        A_set = !A_set;
+        // adjust counter + if A leads B
+        if ( A_set && !B_set )
+        encoderPos++;
+        rotating = false;  // no more debouncing until loop() hits again
     }
-    Serial.println(rotaryHalfSteps);
 }
 
-void int1()
-{
-    if ( micros() - int1time < threshold )
-        return;
-    int1history = int1signal;
-    int1signal = bitRead(encoderBPin, 3);
-    if ( int1history == int1signal )
-        return;
-    int1time = micros();
-    Serial.println(rotaryHalfSteps);
+void doEncoderB() {
+    if ( rotating ) delay (1);
+    if ( digitalRead(encoderBPin) != B_set ) {
+        B_set = !B_set;
+        //  adjust counter - 1 if B leads A
+        if ( B_set && !A_set )
+        encoderPos--;
+        rotating = false;
+    }
 }
 
 void doClick() {
     buttonState = digitalRead(buttonPin);
     if (buttonState == HIGH) {
         digitalWrite(LED_BUILTIN, HIGH);
+        //encoderPos = 0;
     } else {
         digitalWrite(LED_BUILTIN, LOW);
     }
@@ -81,14 +65,17 @@ void setup() {
     digitalWrite(encoderBPin, HIGH);
     pinMode(encoderGndPin, OUTPUT);
     digitalWrite(encoderGndPin, LOW);
-    attachInterrupt(digitalPinToInterrupt(encoderAPin), int0, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(encoderBPin), int1, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(encoderAPin), doEncoderA, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(encoderBPin), doEncoderB, CHANGE);
 
-    Serial.begin (9600);
+    Serial.begin (115200);
 }
 
 void loop() {
-    long actualRotaryTicks = (rotaryHalfSteps / 2);
-    //Serial.println(actualRotaryTicks);
-    //delay(1000);
+    rotating = true;  // reset the debouncer
+    if (lastReportedPos != encoderPos) {
+        Serial.print("Index: ");
+        Serial.println(encoderPos, DEC);
+        lastReportedPos = encoderPos;
+    }
 }
