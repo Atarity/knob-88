@@ -1,4 +1,4 @@
-# xiao-knob
+# Knob-88
 Smallest USB-C encoder 🎛  in 8 min for $8
 
 ## Platformio
