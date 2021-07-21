@@ -15,7 +15,7 @@
 #define encoderBPin 5
 #define encoderSpeed 1                // Multiplier if the control isn't fast enough
 
-// Knob-99 Seeeduino XIAO definition (see readme.md for wiring)
+// Knob-98 Seeeduino XIAO definition (see readme.md for wiring)
 //#define buttonPin 10
 //#define buttonGndPin 9
 //#define encoderAPin 4
