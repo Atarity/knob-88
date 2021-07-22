@@ -1,13 +1,15 @@
 # Knob-88
-Smallest USB-C encoder you can make in 8 min for $8. You can use MIDI or HID or whatever you want "X over USB" protocol. It is also Arduino compatible so you can use all your beloved fancy-shmancy libraries.
+Smallest USB-C encoder you can make in 8 min for $8. It is possible to use MIDI or HID or whatever you want "X over USB" protocol. It is also Arduino compatible so you can use all your beloved fancy-shmancy libraries.
 
 ![KNOB-88](/pics/knob-88.jpg)
+
+![MIDIview demo](/pics/knob-98-midi-view.gif)
 
 ## Bill Of Materials
 - $5 [Seeeduino XIAO](https://www.seeedstudio.com/Seeeduino-XIAO-Arduino-Microcontroller-SAMD21-Cortex-M0+-p-4426.html)
 - $3 Rotary encoder with integrated button, 9-11mm footprint and vertical orientation. It is most common type on the market, actually.
 
-I recommend Bourns [PEC11L series](https://www.bourns.com/products/encoders/contacting-encoders/product/PEC11L). I've used PEC11R-4015F0-S0024. Another popular brands is Alps, Alpha, Elma and tons of their chinese clones. Check datasheet before buying.
+I recommend [Bourns PEC11L series](https://www.bourns.com/products/encoders/contacting-encoders/product/PEC11L). I've used PEC11R-4015F0-S0024. Another popular brands is Alps, Alpha, Elma and tons of their chinese clones. Check datasheet before buying.
 
 ## "Wiring"
 0 wires. There is only 5 soldering points. Remove all unnecessary mounting pins from encoder to avoid short circuit before soldering.
